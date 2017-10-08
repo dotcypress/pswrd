@@ -33,7 +33,7 @@ You can use the `cargo install` command:
 or a classic build and run:
 
 ```bash
-$ git clone https://gitlab.com/dotcypress/pswrd
+$ git clone https://github.com/dotcypress/pswrd
 $ cd pswrd
 $ cargo build --release
 $ cp target/release/pswrd ~/.bin # assuming .bin is in your path
