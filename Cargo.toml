@@ -1,0 +1,34 @@
+[package]
+authors = ["Vitaly Domnikov <dotcypress@gmail.com>"]
+description = "Stateless password vault"
+documentation = "https://github.com/dotcypress/pswrd"
+homepage = "https://github.com/dotcypress/pswrd"
+keywords = ["password-generator"]
+categories = [
+  "command-line-utilities",
+  "authentication",
+  "cryptography",
+]
+license = "MIT/Apache-2.0"
+name = "pswrd"
+readme = "README.md"
+repository = "https://github.com/dotcypress/pswrd"
+version = "0.1.0"
+
+[[bin]]
+name = "pswrd"
+path = "src/bin/main.rs"
+
+[lib]
+name = "pswrd"
+
+[dependencies]
+clap = "2.26.2"
+rpassword = "1.0.0"
+rust-crypto = "0.2.36"
+
+[badges]
+travis-ci = { repository = "dotcypress/pswrd", branch = "master" }
+appveyor = { repository = "dotcypress/pswrd", branch = "master", service = "github" }
+
+
