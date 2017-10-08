@@ -17,6 +17,7 @@ version = "0.1.0"
 
 [[bin]]
 name = "pswrd"
+doc = false
 path = "src/bin/main.rs"
 
 [lib]

@@ -4,12 +4,28 @@ use crypto::pbkdf2::pbkdf2;
 use crypto::sha2::Sha256;
 use crypto::hmac::Hmac;
 
-pub fn pswrd(scope: &str, username: &str, master_password: &str, password_index: u32) -> String {
+/// Generates derived password for given scope and identity.
+///
+/// # Arguments
+///
+/// * `scope` - Slice with scope.
+/// * `identity` - Slice with identity.
+/// * `master_password` - Slice with scope.
+/// * `password_index` - Password index.
+///
+/// # Example
+///
+/// ```rust
+/// use pswrd::pswrd;
+/// let password = pswrd("fbi.gov", "root", "Pa$$W0rd", 0);
+/// assert_eq!(password, "jXHcSU1TqyCEk6Ui")
+/// ```
+pub fn pswrd(scope: &str, identity: &str, master_password: &str, password_index: u32) -> String {
     let mut mac = Hmac::new(Sha256::new(), &master_password.as_bytes());
     let mut password: [u8; 16] = [0; 16];
     pbkdf2(
         &mut mac,
-        format!("{}{}", scope, username).as_bytes(),
+        format!("{}{}", scope, identity).as_bytes(),
         1000 + password_index,
         &mut password,
     );
@@ -122,17 +138,17 @@ mod test {
     }
 
     #[test]
-    fn only_username() {
+    fn only_identity() {
         assert_eq!(pswrd("", "foo", "", 0), "zb4}08l1$hHgG9ag");
     }
 
     #[test]
-    fn scope_and_username() {
+    fn scope_and_identity() {
         assert_eq!(pswrd("site.tld", "foo", "", 0), "F|ZT=5C(r|jZoAz6");
     }
 
     #[test]
-    fn scope_and_username_and_index() {
+    fn scope_and_identity_and_index() {
         assert_eq!(pswrd("site.tld", "foo", "", 42), "qS#g&8h_{Ozwab$*");
     }
 

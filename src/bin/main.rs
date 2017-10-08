@@ -22,6 +22,22 @@ fn run() -> Result<(), String> {
         .version(env!("CARGO_PKG_VERSION"))
         .author("Vitaly Domnikov <dotcypress@gmail.com>")
         .about("Stateless password vault.")
+        .after_help(
+            "EXAMPLES:
+    
+    Basic usage:
+         pswrd foo@bar.tld
+    
+    Copy generated password to clipboard:
+         pswrd foo@bar.tld | xclip
+         pswrd foo@bar.tld | pbcopy
+    
+    Anvanced:
+         pswrd -u foo bar.tld
+         pswrd -u foo -s bar.tld
+         pswrd -u=foo -s=bar.tld -i=3
+         pswrd --user foo --scope bar.tld",
+        )
         .arg(
             Arg::with_name("scope")
                 .short("s")
@@ -30,42 +46,42 @@ fn run() -> Result<(), String> {
                 .takes_value(true)
                 .required(true)
                 .display_order(0)
-                .index(1)
+                .index(1),
         )
         .arg(
-            Arg::with_name("username")
+            Arg::with_name("user")
                 .short("u")
-                .long("username")
-                .help("Sets the username")
+                .long("user")
+                .help("Sets the identity.")
                 .takes_value(true)
-                .display_order(1)
+                .display_order(1),
         )
         .arg(
             Arg::with_name("index")
                 .short("i")
                 .long("index")
-                .help("Sets the password index")
+                .help("Sets the password index.")
                 .takes_value(true)
                 .default_value("0")
                 .validator(validate_index)
-                .display_order(2)
+                .display_order(2),
         )
         .arg(
             Arg::with_name("master-password")
                 .long("master-password")
-                .help("Sets the master password")
+                .help("Sets the master password.")
                 .takes_value(true)
-                .display_order(3)
+                .display_order(3),
         )
         .arg(
             Arg::with_name("new-line")
                 .short("n")
-                .help("Print trailing newline character")
-                .display_order(4)
+                .help("Emit trailing newline character.")
+                .display_order(4),
         )
         .get_matches();
     let mut scope = args.value_of("scope").unwrap();
-    let username = args.value_of("username").unwrap_or_else(|| {
+    let user = args.value_of("user").unwrap_or_else(|| {
         let chunks: Vec<&str> = scope.split("@").collect();
         if chunks.len() != 2 {
             return "";
@@ -78,7 +94,7 @@ fn run() -> Result<(), String> {
         None => prompt_password_stderr("Master Password: ").unwrap(),
     };
     let index = args.value_of("index").unwrap().parse().unwrap();
-    let password = pswrd(scope, username, &master_password, index);
+    let password = pswrd(scope, user, &master_password, index);
     if args.is_present("new-line") {
         println!("{}", password);
     } else {
