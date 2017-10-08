@@ -30,5 +30,3 @@ rust-crypto = "0.2.36"
 [badges]
 travis-ci = { repository = "dotcypress/pswrd", branch = "master" }
 appveyor = { repository = "dotcypress/pswrd", branch = "master", service = "github" }
-
-
