@@ -7,17 +7,6 @@ use pswrd::pswrd;
 use rpassword::prompt_password_stderr;
 
 fn main() {
-    run().unwrap();
-}
-
-fn validate_index(v: String) -> Result<(), String> {
-    if v.parse::<u32>().is_ok() {
-        return Ok(());
-    }
-    Err(format!("{} isn't a positive number", &*v))
-}
-
-fn run() -> Result<(), String> {
     let args = App::new("pswrd")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Vitaly Domnikov <dotcypress@gmail.com>")
@@ -100,5 +89,11 @@ fn run() -> Result<(), String> {
     } else {
         print!("{}", password);
     }
-    Ok(())
+}
+
+fn validate_index(v: String) -> Result<(), String> {
+    if v.parse::<u32>().is_ok() {
+        return Ok(());
+    }
+    Err(format!("{} isn't a positive number", &*v))
 }
