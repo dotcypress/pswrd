@@ -21,7 +21,7 @@ fn main() {
          pswrd foo@bar.tld | xclip
          pswrd foo@bar.tld | pbcopy
     
-    Anvanced:
+    Advanced usage:
          pswrd -u foo bar.tld
          pswrd -u foo -s bar.tld
          pswrd -u=foo -s=bar.tld -i=3
