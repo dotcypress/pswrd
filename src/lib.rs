@@ -4,6 +4,8 @@ use crypto::pbkdf2::pbkdf2;
 use crypto::sha2::Sha256;
 use crypto::hmac::Hmac;
 
+const BASE_ITERATIONS: u32 = 10_000;
+
 /// Generates derived password for given scope and identity.
 ///
 /// # Arguments
@@ -18,7 +20,7 @@ use crypto::hmac::Hmac;
 /// ```rust
 /// use pswrd::pswrd;
 /// let password = pswrd("fbi.gov", "root", "Pa$$W0rd", 0);
-/// assert_eq!(password, "jXHcSU1TqyCEk6Ui")
+/// assert_eq!(password, "#WmqQw6$yr%2Q8BV")
 /// ```
 pub fn pswrd(scope: &str, identity: &str, master_password: &str, password_index: u32) -> String {
     let mut mac = Hmac::new(Sha256::new(), &master_password.as_bytes());
@@ -26,7 +28,7 @@ pub fn pswrd(scope: &str, identity: &str, master_password: &str, password_index:
     pbkdf2(
         &mut mac,
         format!("{}{}", scope, identity).as_bytes(),
-        1000 + password_index,
+        BASE_ITERATIONS + password_index,
         &mut password,
     );
     password
@@ -129,31 +131,31 @@ mod test {
 
     #[test]
     fn empty_payload() {
-        assert_eq!(pswrd("", "", "", 0), "_RrXN0aOrE_)TUs1");
+        assert_eq!(pswrd("", "", "", 0), "DBS$@#8A_0g6aGzc");
     }
 
     #[test]
     fn only_scope() {
-        assert_eq!(pswrd("site.tld", "", "", 0), "h8RAYQo&>6qkA0C&");
+        assert_eq!(pswrd("site.tld", "", "", 0), "#vq_dJww$nkU-6uO");
     }
 
     #[test]
     fn only_identity() {
-        assert_eq!(pswrd("", "foo", "", 0), "zb4}08l1$hHgG9ag");
+        assert_eq!(pswrd("", "foo", "", 0), "DBpj;_E_qC<Usj7<");
     }
 
     #[test]
     fn scope_and_identity() {
-        assert_eq!(pswrd("site.tld", "foo", "", 0), "F|ZT=5C(r|jZoAz6");
+        assert_eq!(pswrd("site.tld", "foo", "", 0), "c=!GOs2gD`5X|)Hp");
     }
 
     #[test]
     fn scope_and_identity_and_index() {
-        assert_eq!(pswrd("site.tld", "foo", "", 42), "qS#g&8h_{Ozwab$*");
+        assert_eq!(pswrd("site.tld", "foo", "", 42), "!C&pWC*gx!x|>Y;!");
     }
 
     #[test]
     fn wow_master_password() {
-        assert_eq!(pswrd("site.tld", "foo", "1234", 42), "U()a#cvujhjrZn_Q");
+        assert_eq!(pswrd("site.tld", "foo", "1234", 42), "&1zCFWg}4Nh+iw^v");
     }
 }

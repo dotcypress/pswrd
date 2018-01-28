@@ -15,17 +15,17 @@ fn main() {
             "EXAMPLES:
     
     Basic usage:
-         pswrd foo@bar.tld
+        pswrd foo@bar.tld
     
     Copy generated password to clipboard:
-         pswrd foo@bar.tld | xclip
-         pswrd foo@bar.tld | pbcopy
+        pswrd foo@bar.tld | xclip
+        pswrd foo@bar.tld | pbcopy
     
     Advanced usage:
-         pswrd -u foo bar.tld
-         pswrd -u foo -s bar.tld
-         pswrd -u=foo -s=bar.tld -i=3
-         pswrd --user foo --scope bar.tld",
+        pswrd -u foo bar.tld
+        pswrd -u foo -s bar.tld
+        pswrd -u=foo -s=bar.tld -i=3
+        pswrd --user foo --scope bar.tld",
         )
         .arg(
             Arg::with_name("scope")

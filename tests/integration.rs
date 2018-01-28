@@ -25,7 +25,7 @@ mod integration {
     fn calling_pswrd_with_scope_only() {
         assert_eq!(
             run_pswrd(vec!["foo", "--master-password", "123"]),
-            "W9~UfFs59IsPd>$W"
+            "NLrz;J**7OG7_H|Q"
         );
     }
 
@@ -33,7 +33,7 @@ mod integration {
     fn calling_pswrd_with_scope_and_username() {
         assert_eq!(
             run_pswrd(vec!["bar.tld", "-u", "foo", "--master-password", "123"]),
-            "B2QJ%8oiyosuu&$!"
+            "Ee2>#T|ty#rDPx*j"
         );
     }
 
@@ -41,7 +41,7 @@ mod integration {
     fn calling_pswrd_with_implicit_username() {
         assert_eq!(
             run_pswrd(vec!["foo@bar.tld", "--master-password", "123"]),
-            "B2QJ%8oiyosuu&$!"
+            "Ee2>#T|ty#rDPx*j"
         );
     }
 
