@@ -1,6 +1,6 @@
 # pswrd
 
-Stateless password vault.
+🕶 Stateless password vault.
 
 ## Options
 
@@ -22,6 +22,21 @@ OPTIONS:
 
 ARGS:
     <scope>    Sets the password scope (domain, application name, etc.)
+
+EXAMPLES:
+
+    Basic usage:
+         pswrd foo@bar.tld
+
+    Copy generated password to clipboard:
+         pswrd foo@bar.tld | xclip
+         pswrd foo@bar.tld | pbcopy
+
+    Anvanced:
+         pswrd -u foo bar.tld
+         pswrd -u foo -s bar.tld
+         pswrd -u=foo -s=bar.tld -i=3
+         pswrd --user foo --scope bar.tld
 ```
 
 ## Installation
