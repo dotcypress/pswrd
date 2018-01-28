@@ -13,12 +13,13 @@ license = "MIT/Apache-2.0"
 name = "pswrd"
 readme = "README.md"
 repository = "https://github.com/dotcypress/pswrd"
-version = "0.1.1"
+version = "1.0.0"
 
 [[bin]]
 doc = false
 name = "pswrd"
 path = "src/bin/main.rs"
+
 [badges.appveyor]
 branch = "master"
 repository = "dotcypress/pswrd"
