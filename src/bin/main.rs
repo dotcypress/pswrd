@@ -2,11 +2,13 @@ extern crate clap;
 extern crate pswrd;
 extern crate rpassword;
 
-use clap::{Arg, App};
+use clap::{App, Arg};
 use pswrd::pswrd;
 use rpassword::prompt_password_stderr;
 
-fn main() {
+const BASE_ITERATIONS: i32 = 10_000;
+
+fn main() -> Result<(), std::io::Error> {
     let args = App::new("pswrd")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Vitaly Domnikov <dotcypress@gmail.com>")
@@ -71,7 +73,7 @@ fn main() {
         .get_matches();
     let mut scope = args.value_of("scope").unwrap();
     let user = args.value_of("user").unwrap_or_else(|| {
-        let chunks: Vec<&str> = scope.split("@").collect();
+        let chunks: Vec<&str> = scope.split('@').collect();
         if chunks.len() != 2 {
             return "";
         }
@@ -80,20 +82,22 @@ fn main() {
     });
     let master_password = match args.value_of("master-password") {
         Some(val) => String::from(val),
-        None => prompt_password_stderr("Master Password: ").unwrap(),
+        None => prompt_password_stderr("Master Password: ")?,
     };
-    let index = args.value_of("index").unwrap().parse().unwrap();
-    let password = pswrd(scope, user, &master_password, index);
+    let index: i32 = args.value_of("index").unwrap().parse().unwrap();
+    let password_index = BASE_ITERATIONS + index;
+    let password = pswrd(scope, user, &master_password, password_index as u32);
     if args.is_present("new-line") {
         println!("{}", password);
     } else {
         print!("{}", password);
     }
+    Ok(())
 }
 
 fn validate_index(v: String) -> Result<(), String> {
-    if v.parse::<u32>().is_ok() {
+    if v.parse::<i32>().is_ok() {
         return Ok(());
     }
-    Err(format!("{} isn't a positive number", &*v))
+    Err(format!("{} is not a number", &*v))
 }

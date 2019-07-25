@@ -1,10 +1,8 @@
 extern crate crypto;
 
+use crypto::hmac::Hmac;
 use crypto::pbkdf2::pbkdf2;
 use crypto::sha2::Sha256;
-use crypto::hmac::Hmac;
-
-const BASE_ITERATIONS: u32 = 10_000;
 
 /// Generates derived password for given scope and identity.
 ///
@@ -28,7 +26,7 @@ pub fn pswrd(scope: &str, identity: &str, master_password: &str, password_index:
     pbkdf2(
         &mut mac,
         format!("{}{}", scope, identity).as_bytes(),
-        BASE_ITERATIONS + password_index,
+        password_index,
         &mut password,
     );
     password
@@ -38,91 +36,11 @@ pub fn pswrd(scope: &str, identity: &str, master_password: &str, password_index:
 }
 
 static ALPHABET_RFC1924: [&'static str; 85] = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-    "!",
-    "#",
-    "$",
-    "%",
-    "&",
-    "(",
-    ")",
-    "*",
-    "+",
-    "-",
-    ";",
-    "<",
-    "=",
-    ">",
-    "?",
-    "@",
-    "^",
-    "_",
-    "`",
-    "{",
-    "|",
-    "}",
-    "~",
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I",
+    "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b",
+    "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
+    "v", "w", "x", "y", "z", "!", "#", "$", "%", "&", "(", ")", "*", "+", "-", ";", "<", "=", ">",
+    "?", "@", "^", "_", "`", "{", "|", "}", "~",
 ];
 
 #[cfg(test)]

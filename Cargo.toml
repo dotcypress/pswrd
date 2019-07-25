@@ -1,5 +1,5 @@
 [package]
-authors = ["Vitaly Domnikov <dotcypress@gmail.com>"]
+authors = ["Vitaly Domnikov <oss@vitaly.codes>"]
 categories = [
     "command-line-utilities",
     "authentication",
@@ -13,6 +13,7 @@ license = "MIT/Apache-2.0"
 name = "pswrd"
 readme = "README.md"
 repository = "https://github.com/dotcypress/pswrd"
+edition = "2018"
 version = "1.0.0"
 
 [[bin]]
@@ -31,7 +32,7 @@ repository = "dotcypress/pswrd"
 
 [dependencies]
 clap = "2.29.2"
-rpassword = "2.0.0"
+rpassword = "3.0.2"
 rust-crypto = "0.2.36"
 
 [lib]
