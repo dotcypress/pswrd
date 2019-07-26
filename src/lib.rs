@@ -1,4 +1,4 @@
-use argonautica::Hasher;
+use argonautica::{Error, Hasher};
 
 /// Generates derived password for given scope and identity.
 ///
@@ -13,22 +13,26 @@ use argonautica::Hasher;
 ///
 /// ```rust
 /// use pswrd::pswrd;
-/// let password = pswrd("fbi.gov", "root", 0, "Pa$$W0rd");
+/// let password = pswrd("fbi.gov", "root", 0, "Pa$$W0rd").unwrap();
 /// assert_eq!(password, "+h0kznTVve+g&3{v")
 /// ```
-pub fn pswrd(scope: &str, identity: &str, password_index: u32, master_password: &str) -> String {
-    Hasher::default()
+pub fn pswrd(
+    scope: &str,
+    identity: &str,
+    password_index: u32,
+    master_password: &str,
+) -> Result<String, Box<Error>> {
+    Ok(Hasher::default()
         .with_password(master_password)
         .with_salt(format!("pswrd:{}:{}:{}", scope, identity, password_index))
         .configure_hash_len(16)
         .configure_iterations(192)
         .opt_out_of_secret_key(true)
-        .hash_raw()
-        .unwrap()
+        .hash_raw()?
         .raw_hash_bytes()
         .iter()
         .map(|x| ALPHABET_RFC1924[*x as usize % 85])
-        .collect::<String>()
+        .collect::<String>())
 }
 
 static ALPHABET_RFC1924: [&'static str; 85] = [
@@ -45,26 +49,38 @@ mod test {
 
     #[test]
     fn generate_password() {
-        assert_eq!(pswrd("fbi.gov", "root", 0, "Pa$$W0rd"), "+h0kznTVve+g&3{v");
+        assert_eq!(
+            pswrd("fbi.gov", "root", 0, "Pa$$W0rd").unwrap(),
+            "+h0kznTVve+g&3{v"
+        );
     }
 
     #[test]
     fn only_scope() {
-        assert_eq!(pswrd("site.tld", "", 0, "Pa$$W0rd"), "qDuQQ*(#$kh|YMVL");
+        assert_eq!(
+            pswrd("site.tld", "", 0, "Pa$$W0rd").unwrap(),
+            "qDuQQ*(#$kh|YMVL"
+        );
     }
 
     #[test]
     fn only_identity() {
-        assert_eq!(pswrd("", "foo", 0, "Pa$$W0rd"), "3wp+6K&pk*TGrUYz");
+        assert_eq!(pswrd("", "foo", 0, "Pa$$W0rd").unwrap(), "3wp+6K&pk*TGrUYz");
     }
 
     #[test]
     fn scope_and_identity() {
-        assert_eq!(pswrd("site.tld", "foo", 0, "Pa$$W0rd"), "th-soX7v$O3&C{Wh");
+        assert_eq!(
+            pswrd("site.tld", "foo", 0, "Pa$$W0rd").unwrap(),
+            "th-soX7v$O3&C{Wh"
+        );
     }
 
     #[test]
     fn scope_and_identity_and_index() {
-        assert_eq!(pswrd("site.tld", "foo", 42, "Pa$$W0rd"), "U(<)~{3XJ(fyR9yp");
+        assert_eq!(
+            pswrd("site.tld", "foo", 42, "Pa$$W0rd").unwrap(),
+            "U(<)~{3XJ(fyR9yp"
+        );
     }
 }

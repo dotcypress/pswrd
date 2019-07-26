@@ -2,11 +2,13 @@ extern crate clap;
 extern crate pswrd;
 extern crate rpassword;
 
+use std::io::{Error, ErrorKind};
+
 use clap::{App, Arg};
 use pswrd::pswrd;
 use rpassword::prompt_password_stderr;
 
-fn main() -> Result<(), std::io::Error> {
+fn main() -> Result<(), Error> {
     let args = App::new("pswrd")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Vitaly Domnikov <oss@vitaly.codes>")
@@ -83,13 +85,21 @@ fn main() -> Result<(), std::io::Error> {
         None => prompt_password_stderr("Master Password: ")?,
     };
     let index = args.value_of("index").unwrap().parse().unwrap();
-    let password = pswrd(scope, user, index, &master_password);
-    if args.is_present("new-line") {
-        println!("{}", password);
-    } else {
-        print!("{}", password);
+
+    match pswrd(scope, user, index, &master_password) {
+        Ok(password) => {
+            if args.is_present("new-line") {
+                println!("{}", password);
+            } else {
+                print!("{}", password);
+            }
+            Ok(())
+        }
+        Err(err) => {
+            eprintln!("Failed to generate password: {}", err);
+            Err(Error::from(ErrorKind::InvalidInput))
+        }
     }
-    Ok(())
 }
 
 fn validate_index(v: String) -> Result<(), String> {
