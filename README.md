@@ -53,3 +53,12 @@ $ cd pswrd
 $ cargo build --release
 $ cp target/release/pswrd ~/.bin # assuming .bin is in your path
 ```
+
+## v2.0 breaking сhanges
+
+* Key derivation algorithm: `Argon2`
+* Hash length: `16`
+* Iterations: `192`
+* Lanes: `8`
+* Memory: `4096`
+* Salt format: `pswrd:%scope%:%identity%:%index%`

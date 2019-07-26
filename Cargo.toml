@@ -1,25 +1,16 @@
 [package]
 authors = ["Vitaly Domnikov <oss@vitaly.codes>"]
-categories = [
-    "command-line-utilities",
-    "authentication",
-    "cryptography",
-]
+categories = ["command-line-utilities", "authentication", "cryptography"]
 description = "Stateless password vault"
 documentation = "https://github.com/dotcypress/pswrd"
+edition = "2018"
 homepage = "https://github.com/dotcypress/pswrd"
 keywords = ["password-generator"]
 license = "MIT/Apache-2.0"
 name = "pswrd"
 readme = "README.md"
 repository = "https://github.com/dotcypress/pswrd"
-edition = "2018"
 version = "1.0.0"
-
-[[bin]]
-doc = false
-name = "pswrd"
-path = "src/bin/main.rs"
 
 [badges.appveyor]
 branch = "master"
@@ -30,10 +21,15 @@ service = "github"
 branch = "master"
 repository = "dotcypress/pswrd"
 
+[[bin]]
+doc = false
+name = "pswrd"
+path = "src/bin/main.rs"
+
 [dependencies]
+argonautica = "0.2.0"
 clap = "2.29.2"
 rpassword = "3.0.2"
-rust-crypto = "0.2.36"
 
 [lib]
 name = "pswrd"

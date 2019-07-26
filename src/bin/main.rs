@@ -6,12 +6,10 @@ use clap::{App, Arg};
 use pswrd::pswrd;
 use rpassword::prompt_password_stderr;
 
-const BASE_ITERATIONS: i32 = 10_000;
-
 fn main() -> Result<(), std::io::Error> {
     let args = App::new("pswrd")
         .version(env!("CARGO_PKG_VERSION"))
-        .author("Vitaly Domnikov <dotcypress@gmail.com>")
+        .author("Vitaly Domnikov <oss@vitaly.codes>")
         .about("Stateless password vault.")
         .after_help(
             "EXAMPLES:
@@ -84,9 +82,8 @@ fn main() -> Result<(), std::io::Error> {
         Some(val) => String::from(val),
         None => prompt_password_stderr("Master Password: ")?,
     };
-    let index: i32 = args.value_of("index").unwrap().parse().unwrap();
-    let password_index = BASE_ITERATIONS + index;
-    let password = pswrd(scope, user, &master_password, password_index as u32);
+    let index = args.value_of("index").unwrap().parse().unwrap();
+    let password = pswrd(scope, user, index, &master_password);
     if args.is_present("new-line") {
         println!("{}", password);
     } else {
@@ -96,8 +93,8 @@ fn main() -> Result<(), std::io::Error> {
 }
 
 fn validate_index(v: String) -> Result<(), String> {
-    if v.parse::<i32>().is_ok() {
+    if v.parse::<u32>().is_ok() {
         return Ok(());
     }
-    Err(format!("{} is not a number", &*v))
+    Err(format!("{} is not a positive number", &*v))
 }

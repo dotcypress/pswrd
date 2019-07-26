@@ -1,6 +1,7 @@
 use std::process::Command;
 
-static WITHOUT_ARGS_OUTPUT: &'static str = "error: The following required arguments were not provided:
+static WITHOUT_ARGS_OUTPUT: &'static str =
+    "error: The following required arguments were not provided:
     <scope>
 
 USAGE:
@@ -15,9 +16,9 @@ mod integration {
 
     #[test]
     fn calling_pswrd_without_args() {
-        let output = Command::new("./target/debug/pswrd").output().expect(
-            "failed to execute process",
-        );
+        let output = Command::new("./target/debug/pswrd")
+            .output()
+            .expect("failed to execute process");
         assert_eq!(String::from_utf8_lossy(&output.stderr), WITHOUT_ARGS_OUTPUT);
     }
 
@@ -25,7 +26,7 @@ mod integration {
     fn calling_pswrd_with_scope_only() {
         assert_eq!(
             run_pswrd(vec!["foo", "--master-password", "123"]),
-            "NLrz;J**7OG7_H|Q"
+            "4zZv#`-?w>+4^p&a"
         );
     }
 
@@ -33,7 +34,7 @@ mod integration {
     fn calling_pswrd_with_scope_and_username() {
         assert_eq!(
             run_pswrd(vec!["bar.tld", "-u", "foo", "--master-password", "123"]),
-            "Ee2>#T|ty#rDPx*j"
+            "BFBx(W+YQ<WYqdt{"
         );
     }
 
@@ -41,7 +42,7 @@ mod integration {
     fn calling_pswrd_with_implicit_username() {
         assert_eq!(
             run_pswrd(vec!["foo@bar.tld", "--master-password", "123"]),
-            "Ee2>#T|ty#rDPx*j"
+            "BFBx(W+YQ<WYqdt{"
         );
     }
 

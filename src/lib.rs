@@ -1,8 +1,4 @@
-extern crate crypto;
-
-use crypto::hmac::Hmac;
-use crypto::pbkdf2::pbkdf2;
-use crypto::sha2::Sha256;
+use argonautica::Hasher;
 
 /// Generates derived password for given scope and identity.
 ///
@@ -10,26 +6,26 @@ use crypto::sha2::Sha256;
 ///
 /// * `scope` - Slice with scope.
 /// * `identity` - Slice with identity.
-/// * `master_password` - Slice with scope.
 /// * `password_index` - Password index.
+/// * `master_password` - Slice with master password.
 ///
 /// # Example
 ///
 /// ```rust
 /// use pswrd::pswrd;
-/// let password = pswrd("fbi.gov", "root", "Pa$$W0rd", 0);
-/// assert_eq!(password, "#WmqQw6$yr%2Q8BV")
+/// let password = pswrd("fbi.gov", "root", 0, "Pa$$W0rd");
+/// assert_eq!(password, "+h0kznTVve+g&3{v")
 /// ```
-pub fn pswrd(scope: &str, identity: &str, master_password: &str, password_index: u32) -> String {
-    let mut mac = Hmac::new(Sha256::new(), &master_password.as_bytes());
-    let mut password: [u8; 16] = [0; 16];
-    pbkdf2(
-        &mut mac,
-        format!("{}{}", scope, identity).as_bytes(),
-        password_index,
-        &mut password,
-    );
-    password
+pub fn pswrd(scope: &str, identity: &str, password_index: u32, master_password: &str) -> String {
+    Hasher::default()
+        .with_password(master_password)
+        .with_salt(format!("pswrd:{}:{}:{}", scope, identity, password_index))
+        .configure_hash_len(16)
+        .configure_iterations(192)
+        .opt_out_of_secret_key(true)
+        .hash_raw()
+        .unwrap()
+        .raw_hash_bytes()
         .iter()
         .map(|x| ALPHABET_RFC1924[*x as usize % 85])
         .collect::<String>()
@@ -48,32 +44,27 @@ mod test {
     use super::*;
 
     #[test]
-    fn empty_payload() {
-        assert_eq!(pswrd("", "", "", 0), "DBS$@#8A_0g6aGzc");
+    fn generate_password() {
+        assert_eq!(pswrd("fbi.gov", "root", 0, "Pa$$W0rd"), "+h0kznTVve+g&3{v");
     }
 
     #[test]
     fn only_scope() {
-        assert_eq!(pswrd("site.tld", "", "", 0), "#vq_dJww$nkU-6uO");
+        assert_eq!(pswrd("site.tld", "", 0, "Pa$$W0rd"), "qDuQQ*(#$kh|YMVL");
     }
 
     #[test]
     fn only_identity() {
-        assert_eq!(pswrd("", "foo", "", 0), "DBpj;_E_qC<Usj7<");
+        assert_eq!(pswrd("", "foo", 0, "Pa$$W0rd"), "3wp+6K&pk*TGrUYz");
     }
 
     #[test]
     fn scope_and_identity() {
-        assert_eq!(pswrd("site.tld", "foo", "", 0), "c=!GOs2gD`5X|)Hp");
+        assert_eq!(pswrd("site.tld", "foo", 0, "Pa$$W0rd"), "th-soX7v$O3&C{Wh");
     }
 
     #[test]
     fn scope_and_identity_and_index() {
-        assert_eq!(pswrd("site.tld", "foo", "", 42), "!C&pWC*gx!x|>Y;!");
-    }
-
-    #[test]
-    fn wow_master_password() {
-        assert_eq!(pswrd("site.tld", "foo", "1234", 42), "&1zCFWg}4Nh+iw^v");
+        assert_eq!(pswrd("site.tld", "foo", 42, "Pa$$W0rd"), "U(<)~{3XJ(fyR9yp");
     }
 }
